@@ -58,7 +58,7 @@ Just tell Buggu what you want in plain English:
 *"Hey Buggu, extract the invoice number, date, and line items"*
 
 ✅ **Handles PDFs Like a Pro**  
-Upload multi-page PDFs (up to 10 pages). Buggu converts them to images and "sees" the layout just like you do.
+Upload multi-page PDFs (up to 3 pages). Buggu converts them to images and "sees" the layout just like you do.
 
 ✅ **Shows Its Work**  
 Preview your documents before extraction. Watch Buggu process them in real-time.
@@ -169,7 +169,7 @@ npm run preview
 ### Step 1: Show Buggu Your Documents
 - Click **"Ask Buggu"**
 - Upload images (JPG, PNG, WebP) or PDFs
-- Buggu shows you previews (max 10 pages)
+- Buggu shows you previews (max 3 pages)
 
 ### Step 2: Tell Buggu What You Want
 Use natural language - just like talking to a friend!
@@ -326,7 +326,7 @@ const blob = await canvas.toBlob('image/png', 0.95);
 |--------|-------|
 | Average extraction time | 5-15 seconds (3 pages) |
 | Max file size | 50MB per file |
-| Max pages Buggu can handle | 10 pages |
+| Max pages Buggu can handle | 3 pages |
 | Buggu's brain size | ~22GB (one-time download) |
 | Network usage | **0 bytes** 🔒 |
 

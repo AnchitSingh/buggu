@@ -1,4 +1,5 @@
 // src/utils/chromeAI.js
+import { sanitizeJSON as utilsSanitizeJSON, repairJSON } from './jsonUtils';
 
 let session = null;
 let modelParams = null;
@@ -141,8 +142,45 @@ JSON OUTPUT:`
         const rawResult = await s.prompt([userMessage]);
         console.log('Raw AI response:', rawResult);
         
-        const jsonString = sanitizeJSON(rawResult);
-        const parsedData = JSON.parse(jsonString);
+        // Layered approach to handle JSON parsing
+        let parsedData;
+        
+        try {
+            // First attempt: Direct parsing of sanitized JSON
+            const jsonString = utilsSanitizeJSON(rawResult);
+            parsedData = JSON.parse(jsonString);
+        } catch (parseError) {
+            console.warn('First JSON parsing attempt failed:', parseError.message);
+            
+            try {
+                // Second attempt: Try to repair the JSON
+                const jsonString = utilsSanitizeJSON(rawResult);
+                parsedData = repairJSON(jsonString);
+            } catch (repairError) {
+                console.warn('JSON repair attempt failed:', repairError.message);
+                
+                // Third attempt: If repair fails, try a manual repair prompt to the AI
+                console.log('Attempting AI-based JSON repair...');
+                
+                const repairPrompt = `The following output was not valid JSON. Please fix it and return valid JSON only:
+
+Original output:
+${rawResult}
+
+Return corrected JSON only, with no additional text or formatting:`;
+
+                const repairedResult = await s.prompt([{ 
+                    role: 'user', 
+                    content: repairPrompt 
+                }]);
+                
+                // Try to parse the repaired result
+                const repairedJsonString = utilsSanitizeJSON(repairedResult);
+                parsedData = JSON.parse(repairedJsonString);
+                
+                console.log('✅ JSON repair successful');
+            }
+        }
         
         console.log('✅ Extraction successful');
         
@@ -155,14 +193,18 @@ JSON OUTPUT:`
         console.error('Extraction error:', error);
         
         if (error instanceof SyntaxError) {
-            throw new Error(`AI returned invalid JSON. Try simplifying your schema request. Details: ${error.message}`);
+            // If all JSON repair attempts fail, reset session and throw a user-friendly error
+            await resetSession();
+            throw new Error(`AI returned invalid JSON that couldn't be repaired. Try simplifying your schema request.`);
         }
         
         if (error.name === 'NotSupportedError') {
+            await resetSession();
             throw new Error('Multimodal image input not supported. Ensure Chrome Canary 128+ with image support enabled.');
         }
         
         if (error.name === 'QuotaExceededError') {
+            await resetSession();
             throw new Error(`Image(s) too large for model. Try reducing image count or resolution.`);
         }
         
@@ -172,6 +214,7 @@ JSON OUTPUT:`
         throw error;
     }
 }
+
 
 /**
  * Clean up AI-generated JSON string
