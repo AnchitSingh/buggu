@@ -2,9 +2,9 @@
 
 > Ask Buggu to turn your PDFs and images into structured JSON. Zero server uploads, zero API costs, 100% on-device processing.
 
-[![Chrome AI Challenge 2025](https://img.shields.io/badge/Google%20Chrome-Built--in%20AI%20Challenge%202025-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://googlechromeai2025.devpost.com/)
-[![Built with Gemini Nano](https://img.shields.io/badge/Powered%20by-Gemini%20Nano-8E75B2?style=for-the-badge)](https://developer.chrome.com/docs/ai/built-in)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+![Prompt API](https://img.shields.io/badge/Chrome-Prompt%20API-4285F4?style=flat&logo=google-chrome&logoColor=white)
+![Privacy First](https://img.shields.io/badge/Privacy-100%25%20On--Device-green)
+
 
 [Live Demo](#) • [Video Walkthrough](#) • [Report Bug](#) • [Request Feature](#)
 
