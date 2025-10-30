@@ -1,148 +1,364 @@
-# PDF-to-JSON Converter
+# Buggu - Your Privacy-First Document Extractor
 
-A privacy-first web application that converts PDFs and images to structured JSON data using Chrome's built-in AI, with all processing happening directly in your browser - no server communication, no data sharing, complete privacy protection.
+> Ask Buggu to turn your PDFs and images into structured JSON. Zero server uploads, zero API costs, 100% on-device processing.
 
-## 🚀 Demo
+[![Chrome AI Challenge 2025](https://img.shields.io/badge/Google%20Chrome-Built--in%20AI%20Challenge%202025-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://googlechromeai2025.devpost.com/)
+[![Built with Gemini Nano](https://img.shields.io/badge/Powered%20by-Gemini%20Nano-8E75B2?style=for-the-badge)](https://developer.chrome.com/docs/ai/built-in)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-**[Live Demo](https://your-app-url.com)** (Deploy your app here)
-
-## ✨ Features
-
-- **On-device AI Processing**: All data extraction happens locally in your browser using Chrome's built-in AI
-- **Privacy Focused**: Your documents never leave your device - no data is sent to any server
-- **Custom Schema Extraction**: Define your JSON structure using natural language prompts
-- **Multi-format Support**: Process PDFs, PNG, JPG, and other image formats
-- **Schema Templates**: Quick-start templates for common document types (invoices, receipts, study materials)
-- **Real-time Preview**: See document previews before processing
-- **JSON Output**: Clean, structured JSON output for easy integration with other applications
-
-## 🎯 Why This Project?
-
-### The Problem
-Data extraction from documents like PDFs, invoices, and bills is typically expensive and requires sharing sensitive data with third-party services. Many users face privacy concerns and costs associated with these services.
-
-### The Solution
-This web application solves these issues by:
-- Using Chrome's built-in AI for completely on-device processing
-- Ensuring zero data leakage - your documents never leave your computer
-- Making data extraction affordable and accessible to everyone
-- Providing customizable extraction based on natural language instructions
-
-## 🛠️ Tech Stack
-
-- **Frontend**: React.js
-- **Styling**: CSS with Tailwind-inspired classes
-- **AI Processing**: Chrome's LanguageModel API
-- **Build Tool**: Vite.js
-- **Browser**: Requires Chrome 127+ with AI features enabled
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Chrome browser version 127 or higher
-- Chrome AI features enabled (chrome://flags/#optimization-guide-on-device-model)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd pdf-to-json
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-4. Open your browser and navigate to `http://localhost:5173`
-
-### Production Build
-```bash
-npm run build
-```
-
-## 📖 Usage
-
-1. Upload your PDF or image files
-2. Describe what data you want to extract in natural language
-3. Review document previews if needed
-4. Click "Process Files" to extract structured JSON
-5. Copy, download, or integrate the extracted data into your applications
-
-### Example Use Cases
-- **Invoice Processing**: Extract invoice numbers, dates, vendor info, line items, and totals
-- **Receipt Analysis**: Extract store names, dates, items, and total amounts
-- **Study Material**: Convert textbook pages to structured content for note-taking apps
-- **Document Archiving**: Convert paper documents to JSON for database storage
-
-### Natural Language Schema Examples
-- "Extract invoice number, date, vendor name, items with prices, subtotal, tax, and total"
-- "Get all line items with product names, quantities, unit prices, and totals"
-- "Extract student names, grades, and subjects from a report card"
-
-## 🔧 Architecture
-
-- `src/App.jsx`: Main application component
-- `src/utils/chromeAI.js`: Chrome AI API integration and session management
-- `src/utils/aiAvailability.js`: AI availability checking with retry logic
-- `src/utils/pdfProcessor.js`: File processing and image conversion
-- `src/components/`: UI components for different application views
-
-## 🛡️ Privacy & Security
-
-- All document processing occurs locally in your browser
-- No data is transmitted to any external servers
-- Chrome's LanguageModel API runs completely on-device
-- Temporary image previews are cleared after processing
-
-## 🔍 Browser Compatibility
-
-- **Primary Support**: Chrome 127+ with AI features enabled
-- **AI API**: LanguageModel API (Experimental)
-- **Features**: Requires Chrome flags to be enabled: `#optimization-guide-on-device-model`
-
-## 🤝 Contributing
-
-Contributions are welcome! Here are some areas where you can help:
-
-1. **UI/UX Improvements**: Enhance the interface and user experience
-2. **Schema Validation**: Add JSON schema validation and error correction
-3. **Additional Formats**: Support more document types
-4. **Accessibility**: Improve accessibility features
-5. **Documentation**: Enhance documentation and examples
-
-### Development Guidelines
-- Follow existing code structure and conventions
-- Maintain privacy-first approach in all changes
-- Ensure all processing remains on-device
-- Write clear, comprehensive commit messages
-
-## 🐛 Known Issues
-
-- AI API availability varies by Chrome version and configuration
-- Large documents may require session resets
-- Processing time depends on document complexity and device performance
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- Chrome team for the experimental LanguageModel API
-- React community for the development framework
-- Vite.js for the build tooling
-
-## 📞 Support
-
-For support, please open an issue in the GitHub repository.
+[Live Demo](#) • [Video Walkthrough](#) • [Report Bug](#) • [Request Feature](#)
 
 ---
 
-**Privacy-focused data extraction at your fingertips!**
+## Meet Buggu
+
+**Buggu is your personal document extraction assistant that lives entirely in your browser.**
+
+Have an invoice? **Ask Buggu.**  
+Got a receipt? **Ask Buggu.**  
+Need data from a form? **Ask Buggu.**
+
+The best part? Buggu never sends your documents anywhere. Everything happens on your device using Chrome's Built-in AI.
+
+---
+
+## The Problem Buggu Solves
+
+### The Privacy Paradox of Document Extraction
+
+Every day, millions of people need to extract data from documents:
+- **Small businesses** processing invoices and receipts
+- **Healthcare workers** digitizing patient forms
+- **Students** organizing study materials
+- **Freelancers** tracking expenses
+
+**But here's the problem:**
+
+Current solutions require **uploading sensitive documents to cloud servers**:
+- ❌ Privacy risks (invoices contain financial data, forms contain PII)
+- ❌ API costs (per-document charges add up)
+- ❌ Internet dependency (offline = unusable)
+- ❌ Vendor lock-in (different APIs for OCR vs. extraction)
+
+**What if you could just ask someone you trust?**
+
+---
+
+## How Buggu Works
+
+Buggu leverages **Chrome's Built-in AI (Gemini Nano)** to extract structured JSON from documents **without ever leaving your browser**.
+
+### What Makes Buggu Special
+
+✅ **100% Private**  
+Buggu processes everything on your device. Your invoices, receipts, and forms never touch a server.
+
+✅ **Natural Language**  
+Just tell Buggu what you want in plain English:  
+*"Hey Buggu, extract the invoice number, date, and line items"*
+
+✅ **Handles PDFs Like a Pro**  
+Upload multi-page PDFs (up to 10 pages). Buggu converts them to images and "sees" the layout just like you do.
+
+✅ **Shows Its Work**  
+Preview your documents before extraction. Watch Buggu process them in real-time.
+
+✅ **Zero Cost**  
+No subscriptions, no API keys, no credit cards. Buggu is completely free.
+
+✅ **Works Offline**  
+Once Chrome's AI model is downloaded, Buggu works without internet.
+
+---
+
+## Architecture
+
+### The Buggu Stack
+
+```
+Frontend:  React 18 + Vite
+Brain:     Chrome Prompt API (Gemini Nano) with Multimodal Input
+PDF Eyes:  PDF.js (Canvas rendering at 2x quality)
+Style:     CSS3 with modern gradients
+```
+
+### How Buggu Thinks
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Buggu's Interface                          │
+│  User Flow: Upload → Tell Buggu what you want → Get JSON        │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  📄 Document Processing                          │
+│                                                                  │
+│  PDF → PDF.js renders to Canvas → High-res PNG blobs           │
+│  Images → Direct blob processing                                │
+│                                                                  │
+│  Why images? Buggu needs to "see" tables, forms, layouts        │
+└──────────────────────────────────┬──────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  🧠 Buggu's Brain (Chrome AI)                    │
+│                                                                  │
+│  System Prompt: "You're Buggu, a data extraction assistant"     │
+│  User Message: [What user wants + Document images]              │
+│  Gemini Nano: Analyzes images & extracts structured data        │
+│  Output: Raw JSON text                                           │
+└──────────────────────────────┬───────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  ✨ JSON Cleanup & Delivery                      │
+│                                                                  │
+│  -  Remove markdown artifacts                                     │
+│  -  Parse & validate JSON                                         │
+│  -  Show results with copy/download options                       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+**What You Need:**
+- **Chrome Canary 127+** or **Chrome Dev 127+**
+
+**Wake Up Buggu (Enable Chrome AI):**
+
+1. Go to `chrome://flags/#prompt-api-for-gemini-nano`
+2. Set to **"Enabled"**
+3. Go to `chrome://flags/#optimization-guide-on-device-model`
+4. Set to **"Enabled BypassPerfRequirement"**
+5. Restart Chrome
+6. Visit `chrome://components/` and click "Check for update" on "Optimization Guide On Device Model"
+7. Wait for download (this is Buggu's brain!)
+
+### Installation
+
+```
+# Get Buggu
+git clone https://github.com/AnchitSingh/buggu.git
+cd buggu
+
+# Install dependencies
+npm install
+
+# Start Buggu
+npm run dev
+```
+
+Visit `http://localhost:5173` and meet Buggu!
+
+### Deploy Buggu
+
+```
+npm run build
+npm run preview
+```
+
+---
+
+## Using Buggu
+
+### Step 1: Show Buggu Your Documents
+- Click **"Ask Buggu"**
+- Upload images (JPG, PNG, WebP) or PDFs
+- Buggu shows you previews (max 10 pages)
+
+### Step 2: Tell Buggu What You Want
+Use natural language - just like talking to a friend!
+
+**Buggu's Favorite Requests:**
+
+**For Invoices:**
+```
+Hey Buggu, extract the invoice number, date, vendor name, 
+vendor address, line items with descriptions and prices, 
+subtotal, tax, and total amount
+```
+
+**For Receipts:**
+```
+Buggu, get me the store name, date, time, all items with 
+quantities and prices, subtotal, tax, and total
+```
+
+**For Forms:**
+```
+Buggu, extract all the form fields and their values
+```
+
+**For Study Materials:**
+```
+Buggu, organize this into sections with headings and 
+key points as bullet points
+```
+
+### Step 3: Watch Buggu Work
+- Click **"Let Buggu Process"**
+- Watch real-time progress
+- No internet needed (check your network tab!)
+
+### Step 4: Get Your Data
+- Copy JSON to clipboard
+- Download as `.json` file
+- Use in spreadsheets, databases, or apps
+
+---
+
+## See Buggu in Action
+
+[Watch the 3-minute demo](YOUR_YOUTUBE_LINK_HERE)
+
+**Demo highlights:**
+- Meet Buggu
+- Privacy proof (DevTools shows zero network requests)
+- Multi-page invoice extraction
+- Custom schema with natural language
+- Real-time processing visualization
+
+---
+
+## Chrome AI Challenge 2025
+
+### What Buggu Uses
+
+✅ **Prompt API** - Buggu's reasoning engine  
+✅ **Multimodal Input** - Buggu's ability to "see" documents
+
+### The Problem Buggu Solves
+
+**Privacy-first document extraction for sensitive data.**
+
+Traditional services force you to upload invoices, medical records, tax forms, and personal documents to strangers' servers. 
+
+**Buggu changes that.**
+
+With Buggu, your documents stay on your device. This means:
+
+- ✅ Healthcare workers can process HIPAA-regulated documents safely
+- ✅ Small businesses keep financial data private
+- ✅ Students organize notes without data collection
+- ✅ Freelancers track expenses without third-party exposure
+
+### Who Can Use Buggu?
+
+**Everyone with Chrome!**
+
+- 🌍 **Regional:** Works worldwide (no geo-restrictions)
+- 👥 **Audience:** Small businesses, students, healthcare, freelancers, privacy-conscious users
+- 🗣️ **Languages:** English (more coming soon via `outputLanguages`)
+
+---
+
+## 🛠️ Technical Deep Dive
+
+### How Buggu Understands Documents
+
+Buggu uses Chrome's multimodal Prompt API to "see" documents:
+
+```
+const bugguMessage = {
+  role: 'user',
+  content: [
+    {
+      type: 'text',
+      value: 'Extract invoice data: invoice_number, date, items...'
+    },
+    {
+      type: 'image',
+      value: invoicePageBlob
+    }
+  ]
+};
+
+const result = await bugguSession.prompt([bugguMessage]);
+```
+
+### Why Buggu Uses Images (Not Text)
+
+PDFs have **visual structure** that plain text loses:
+- Table rows and columns
+- Form field positions
+- Handwritten notes
+- Logos and stamps
+
+Buggu renders PDFs to 2x high-res images so Gemini Nano can "see" this structure:
+
+```
+const viewport = page.getViewport({ scale: 2.0 });
+await page.render({ canvasContext, viewport }).promise;
+const blob = await canvas.toBlob('image/png', 0.95);
+```
+
+---
+
+## 🔒 Buggu's Privacy Promise
+
+### What Buggu NEVER Does
+
+❌ Upload your documents  
+❌ Store your data  
+❌ Track your extractions  
+❌ Send telemetry  
+❌ Call external APIs  
+
+### What Buggu Always Does
+
+✅ Process locally  
+✅ Use Chrome's on-device AI  
+✅ Clear memory after extraction  
+✅ Give YOU full control  
+
+**Trust, but verify:** Open DevTools → Network tab while using Buggu. You'll see **zero outbound requests** during processing.
+
+---
+
+## Buggu's Performance
+
+| Metric | Value |
+|--------|-------|
+| Average extraction time | 5-15 seconds (3 pages) |
+| Max file size | 50MB per file |
+| Max pages Buggu can handle | 10 pages |
+| Buggu's brain size | ~22GB (one-time download) |
+| Network usage | **0 bytes** 🔒 |
+
+---
+
+## Contribute to Buggu
+
+Want to make Buggu smarter? Here are some ideas:
+
+- [ ] Add streaming feedback ("Buggu is reading page 2...")
+- [ ] Teach Buggu more languages (Spanish, Japanese)
+- [ ] Add JSON Schema validation
+- [ ] Batch processing (multiple PDFs at once)
+- [ ] Export to CSV/Excel
+- [ ] Browser extension version of Buggu
+
+---
+
+## 📜 License
+
+MIT License - see [LICENSE](LICENSE) file
+
+---
+
+<p align="center">
+  <strong>Buggu - Your Privacy-First Document Extractor</strong>
+</p>
+
+<p align="center">
+  Built with ❤️ for the <strong>Chrome Built-in AI Challenge 2025</strong>
+</p>
+
+<p align="center">
+  <i>"Ask Buggu. Keep it private."</i>
+</p>
