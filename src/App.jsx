@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { processFiles, createPreviewURL, revokePreviewURL } from './utils/pdfProcessor';
 import { extractJSONFromImages } from './utils/chromeAI';
 import { getAIStatus } from './utils/aiAvailability';
@@ -11,47 +11,107 @@ function App() {
   const [schemaPrompt, setSchemaPrompt] = useState('');
   const [jsonOutput, setJsonOutput] = useState(null);
   const [error, setError] = useState(null);
-  const [aiStatus, setAiStatus] = useState({ loading: true });
+  const [aiStatus, setAiStatus] = useState({ loading: true, available: false, state: 'checking' });
+  
+  // Use ref to track if check is in progress (survives StrictMode double-invoke)
+  const checkInProgressRef = useRef(false);
+  const isMountedRef = useRef(true);
 
-  // Check AI availability on mount
-  useEffect(() => {
-    let isMounted = true; // To prevent state updates on unmounted component
-
-    const checkAI = async () => {
+  // Helper function to check AI with retries
+  const checkAIWithRetry = async (maxAttempts = 3) => {
+    // Prevent concurrent checks (important for StrictMode)
+    if (checkInProgressRef.current) {
+      console.log('AI check already in progress, skipping...');
+      return;
+    }
+    
+    checkInProgressRef.current = true;
+    
+    if (isMountedRef.current) {
+      setAiStatus({ loading: true, available: false, state: 'checking' });
+    }
+    
+    let attempts = 0;
+    
+    while (attempts < maxAttempts && isMountedRef.current) {
+      attempts++;
+      
       try {
         const status = await getAIStatus();
-        if (isMounted) {
+        
+        if (!isMountedRef.current) break;
+        
+        console.log(`AI check attempt ${attempts}/${maxAttempts}:`, status);
+        
+        // If ready or downloadable, consider it available
+        if (status.state === 'ready' || status.state === 'downloadable') {
           setAiStatus({
             loading: false,
-            available: status.state === 'ready',
+            available: true,
+            error: null,
+            state: status.state
+          });
+          checkInProgressRef.current = false;
+          return;
+        }
+        
+        // If downloading, retry after delay (except on last attempt)
+        if (status.state === 'downloading' && attempts < maxAttempts) {
+          console.log(`AI is downloading, retrying in 1s...`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          continue;
+        }
+        
+        // If unavailable on first attempt, retry once more
+        if (status.state === 'unavailable' && attempts < maxAttempts) {
+          console.log(`AI unavailable, retrying in 1s...`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          continue;
+        }
+        
+        // Final attempt or non-retryable state
+        if (isMountedRef.current) {
+          setAiStatus({
+            loading: false,
+            available: false,
             error: status.error || null,
             state: status.state
           });
         }
+        checkInProgressRef.current = false;
+        return;
+        
       } catch (error) {
-        if (isMounted) {
-          setAiStatus({
-            loading: false,
-            available: false,
-            error: error.message,
-            state: 'error'
-          });
+        console.error(`AI check attempt ${attempts}/${maxAttempts} error:`, error);
+        
+        if (attempts >= maxAttempts) {
+          if (isMountedRef.current) {
+            setAiStatus({
+              loading: false,
+              available: false,
+              error: error.message,
+              state: 'error'
+            });
+          }
+          checkInProgressRef.current = false;
+          return;
         }
+        
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
-    };
+    }
     
-    // Slight delay to allow Chrome AI API to initialize properly on first load
-    // This addresses the issue where API is not ready immediately on page load
-    const timer = setTimeout(() => {
-      if (isMounted) {
-        checkAI();
-      }
-    }, 500);
+    checkInProgressRef.current = false;
+  };
 
-    // Cleanup function to prevent state updates on unmounted component
+  // Check AI availability on mount
+  useEffect(() => {
+    isMountedRef.current = true;
+    checkAIWithRetry();
+    
     return () => {
-      isMounted = false;
-      clearTimeout(timer);
+      isMountedRef.current = false;
     };
   }, []);
 
@@ -182,18 +242,21 @@ function HomePage({ onStart, aiStatus }) {
                 <p className="text-slate-600">Checking AI availability...</p>
               </div>
             ) : aiStatus.available ? (
-              <button 
-                onClick={onStart}
-                className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl shadow-xl shadow-amber-600/25 hover:shadow-amber-600/40 hover:scale-105 transform transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
-              >
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Convert to JSON
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                </svg>
-              </button>
+              <div className="flex flex-col items-center">
+                <button 
+                  onClick={onStart}
+                  className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl shadow-xl shadow-amber-600/25 hover:shadow-amber-600/40 hover:scale-105 transform transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
+                >
+                  <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Convert to JSON
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                  </svg>
+                </button>
+                
+              </div>
             ) : (
               <div className="text-center">
                 <button 
@@ -215,19 +278,11 @@ function HomePage({ onStart, aiStatus }) {
                 {/* Add refresh button for retrying AI status check */}
                 {(aiStatus.state === 'error' || aiStatus.state === 'unavailable') && (
                   <button 
-                    onClick={async () => {
-                      setAiStatus({ loading: true });
-                      const status = await getAIStatus();
-                      setAiStatus({
-                        loading: false,
-                        available: status.state === 'ready',
-                        error: status.error || null,
-                        state: status.state
-                      });
-                    }}
-                    className="mt-3 px-4 py-2 text-sm font-medium text-amber-600 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors"
+                    onClick={checkAIWithRetry}
+                    disabled={checkInProgressRef.current}
+                    className="mt-3 px-4 py-2 text-sm font-medium text-amber-600 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Try Again
+                    {aiStatus.loading ? 'Checking...' : 'Try Again'}
                   </button>
                 )}
               </div>

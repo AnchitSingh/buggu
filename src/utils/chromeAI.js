@@ -15,10 +15,14 @@ function getLanguageModel() {
 async function checkAvailability() {
     try {
         const LM = getLanguageModel();
-        if (!LM) return { available: false, status: 'no-api', detail: null };
+        if (!LM) {
+            console.warn('LanguageModel API not found');
+            return { available: false, status: 'no-api', detail: null };
+        }
 
         // Check if the API is accessible before calling availability
         if (typeof LM.availability !== 'function') {
+            console.error('LanguageModel.availability is not a function');
             return {
                 available: false,
                 status: 'error',
@@ -27,13 +31,23 @@ async function checkAvailability() {
             };
         }
 
-        const availability = await LM.availability();
+        // Call availability with timeout to prevent hanging
+        const availabilityPromise = LM.availability();
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Availability check timeout')), 5000)
+        );
+        
+        const availability = await Promise.race([availabilityPromise, timeoutPromise]);
+        
+        console.log('AI availability status:', availability);
+        
         return {
             available: availability !== 'unavailable',
             status: availability,
             detail: null
         };
     } catch (error) {
+        console.error('Availability check error:', error);
         return {
             available: false,
             status: 'error',
@@ -79,7 +93,7 @@ async function createSessionIfNeeded() {
                 { type: "image" }
             ],
             expectedOutputs: [
-                { type: "text", languages: ["en"] }
+                { type: "text", languages: ["en"] }  // Explicitly specify output language
             ],
             monitor(m) {
                 m.addEventListener('downloadprogress', (e) => {
