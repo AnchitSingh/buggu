@@ -159,6 +159,8 @@ function App() {
         <HomePage 
           onStart={() => setStep('modal')} 
           aiStatus={aiStatus} 
+          checkAIWithRetry={checkAIWithRetry}
+          checkInProgressRef={checkInProgressRef}
         />
       )}
       
@@ -202,7 +204,7 @@ const BackgroundEffects = () => (
 );
 
 // ===== Home Page =====
-function HomePage({ onStart, aiStatus }) {
+function HomePage({ onStart, aiStatus, checkAIWithRetry, checkInProgressRef }) {
   return (
     <main className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto text-center">
