@@ -6,7 +6,7 @@
 ![Privacy First](https://img.shields.io/badge/Privacy-100%25%20On--Device-green)
 
 
-[Live Demo](#) • [Video Walkthrough](#) • [Report Bug](#) • [Request Feature](#)
+[Live Demo](https://youtu.be/UYL1tCx-APg)
 
 ---
 
@@ -167,7 +167,7 @@ npm run preview
 ## Using Buggu
 
 ### Step 1: Show Buggu Your Documents
-- Click **"Ask Buggu"**
+- Click **"Convert to JSON"**
 - Upload images (JPG, PNG, WebP) or PDFs
 - Buggu shows you previews (max 3 pages)
 
@@ -201,8 +201,7 @@ key points as bullet points
 ```
 
 ### Step 3: Watch Buggu Work
-- Click **"Let Buggu Process"**
-- Watch real-time progress
+- Click **Process Files**
 - No internet needed (check your network tab!)
 
 ### Step 4: Get Your Data
@@ -212,18 +211,6 @@ key points as bullet points
 
 ---
 
-## See Buggu in Action
-
-[Watch the 3-minute demo](YOUR_YOUTUBE_LINK_HERE)
-
-**Demo highlights:**
-- Meet Buggu
-- Privacy proof (DevTools shows zero network requests)
-- Multi-page invoice extraction
-- Custom schema with natural language
-- Real-time processing visualization
-
----
 
 ## Chrome AI Challenge 2025
 
@@ -251,13 +238,13 @@ With Buggu, your documents stay on your device. This means:
 
 **Everyone with Chrome!**
 
-- 🌍 **Regional:** Works worldwide (no geo-restrictions)
-- 👥 **Audience:** Small businesses, students, healthcare, freelancers, privacy-conscious users
-- 🗣️ **Languages:** English (more coming soon via `outputLanguages`)
+- **Regional:** Works worldwide (no geo-restrictions)
+- **Audience:** Small businesses, students, healthcare, freelancers, privacy-conscious users
+- **Languages:** English (more coming soon via `outputLanguages`)
 
 ---
 
-## 🛠️ Technical Deep Dive
+## Technical Deep Dive
 
 ### How Buggu Understands Documents
 
@@ -299,7 +286,7 @@ const blob = await canvas.toBlob('image/png', 0.95);
 
 ---
 
-## 🔒 Buggu's Privacy Promise
+## Buggu's Privacy Promise
 
 ### What Buggu NEVER Does
 
@@ -320,32 +307,7 @@ const blob = await canvas.toBlob('image/png', 0.95);
 
 ---
 
-## Buggu's Performance
-
-| Metric | Value |
-|--------|-------|
-| Average extraction time | 5-15 seconds (3 pages) |
-| Max file size | 50MB per file |
-| Max pages Buggu can handle | 3 pages |
-| Buggu's brain size | ~22GB (one-time download) |
-| Network usage | **0 bytes** 🔒 |
-
----
-
-## Contribute to Buggu
-
-Want to make Buggu smarter? Here are some ideas:
-
-- [ ] Add streaming feedback ("Buggu is reading page 2...")
-- [ ] Teach Buggu more languages (Spanish, Japanese)
-- [ ] Add JSON Schema validation
-- [ ] Batch processing (multiple PDFs at once)
-- [ ] Export to CSV/Excel
-- [ ] Browser extension version of Buggu
-
----
-
-## 📜 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file
 
